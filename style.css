@@ -1,0 +1,40 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+main {
+    margin: auto;
+    max-width: 800px;
+    margin-bottom: 200px;
+}
+
+.try-it-input,
+.try-it-output {
+    padding: 1em;
+    border: 1px solid #ccc;
+    outline: none;
+    font-family: 'Courier New', Courier, monospace;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+}
+
+.try-it-output {
+    background-color: #eee;
+}
+
+details summary {
+    cursor: pointer;
+}
+
+details summary>* {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

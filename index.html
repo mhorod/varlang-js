@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infering variance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <h1> Taming the Wildcards - Interactive variance infering algorithm</h1>
+        <p>
+            This is an interactive version of the variance infering algorithm described in the paper
+            <a href="https://people.cs.umass.edu/~yannis/variance-extended2011.pdf">Taming the Wildcards: Combining
+                Definition-
+                and Use-Site Variance</a>
+            by John Altidor, Shan Shan Huang, and Yannis Smaragdakis.
+        </p>
+
+        <h3>Class declarations</h3>
+        <p>
+            Enter the declarations of the classes you want to infer the variance of. The syntax is something between
+            Java and C++:
+        <pre><code>class C&ltS, T&gt { T foo(D&lt? super S&gt); } class D&ltT&gt { void bar(T); } </code></pre>
+        </p>
+        <textarea class="try-it-input" id="variance-inference-input"
+            placeholder="class C<S, T> { T foo(D<? super S>); } class D<T> { void bar(T); } ">
+        </textarea>
+
+        <details>
+            <summary>
+                <h3>Generated constraints</h3>
+            </summary>
+            <p>
+                Raw constraints generated from the class declarations and expanded with the rules from the paper.
+            </p>
+            <pre class="try-it-output"><code id="generated-constraints"></code></pre>
+        </details>
+
+        <details>
+            <summary>
+                <h3>Simplified constraints</h3>
+            </summary>
+            <p>
+                Constraints after simplification - removing redundant constraints and constraints that are implied by
+                other constraints.
+
+            </p>
+            <pre class="try-it-output"><code id="simplified-constraints"></code></pre>
+        </details>
+
+        <details>
+            <summary>
+                <h3>Most general solution</h3>
+            </summary>
+            <pre class="try-it-output"><code id="solution"></code></pre>
+        </details>
+
+        <details>
+            <summary>
+                <h3>Explanation</h3>
+            </summary>
+            <img src="variance-lattice.png" />
+            <p>
+                <b>Variance</b> of class
+                <code> C&ltT&gt </code> describes how the subtype relationship between
+                <code> C&ltA&gt </code> and
+                <code> C&ltB&gt </code> relates to the subtype relationship between
+                <code> A </code> and
+                <code> B </code>.
+                <br>
+                Assuming <code> B </code> is a subtype of <code> A </code>
+                there are four possible variances:
+            <ul>
+                <li> covariance (
+                    <code> + </code>) -
+                    <code> C&ltB&gt </code> is subtype of
+                    <code> C&ltA&gt </code>
+                </li>
+                <li> cotravariance (
+                    <code> - </code>) -
+                    <code> C&ltA&gt </code> is subtype of
+                    <code> C&ltB&gt </code>
+                </li>
+                <li> invariance (
+                    <code> o </code>) -
+                    <code> C&ltA&gt </code> and
+                    <code> C&ltB&gt </code> are unrelated
+                </li>
+                <li> bivariance (
+                    <code> * </code>) -
+                    <code> C&ltA&gt </code> and
+                    <code> C&ltB&gt </code> are the same (equivalent) type.
+                    This happens only when the type parameter is not used or is impossible to use in the class.
+                </li>
+            </ul>
+            </p>
+            <p>
+                <b>Transform operator ⊗ </b> is used to combine two variances into one. It is defined as follows:
+            <ul>
+                <li> + ⊗ v = v </li>
+                <li> * ⊗ v = * </li>
+                <li> o ⊗ v = o </li>
+                <li> - ⊗ - = + </li>
+                <li> - ⊗ + = - </li>
+            </ul>
+            In other words - covariance does not change the variance, bivariance and invariance transform everything
+            into themselves, and cotravariance inverses the variance.
+            </p>
+
+            <p>
+                <b> Join operator ⊔ </b> takes upper bound of two variances on the lattice.
+                <br>
+                Intuitively - when instatiating a contravariant class with a covariant type parameter (or vice versa) we
+                remove all
+                covariant (return type) and contravariant (parameter type) uses of the type parameter.
+                This leaves us with a class that has no usages whatsoever of the type parameter, so it is bivariant.
+            </p>
+
+        </details>
+
+    </main>
+
+    <script src="variance-inference.js"></script>
+</body>
+
+</html>
